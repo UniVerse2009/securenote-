@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+	<meta charset="UTF-8">
+	<title>Keycloak Login Demo</title>
+
+	<style>
+		body {
+			font-family: sans-serif;
+			padding: 40px;
+		}
+
+		button {
+			padding: 10px 20px;
+			margin-right: 10px;
+			cursor: pointer;
+		}
+
+		pre {
+			background: #eee;
+			padding: 10px;
+		}
+	</style>
+</head>
+<body>
+
+	<h2>Demo Login Keycloak</h2>
+
+	<button id="login">Login</button>
+	<button id="logout">Logout</button>
+
+	<h3>Status</h3>
+	<pre id="status">Belum dicek...</pre>
+
+	<script type="module">
+
+		import Keycloak from "http://localhost:3000/public/js/keycloak.js";
+
+		const keycloak = new Keycloak({
+			url: "http://localhost:8080",
+			realm: "myrealm",
+			clientId: "frontend"
+		});
+
+		const status = document.getElementById("status");
+
+		keycloak.init({
+			onLoad: "check-sso",
+			pkceMethod: "S256",
+			redirectUri: "http://localhost:3000/public/index.html"
+		})
+		.then(authenticated => {
+
+			if (authenticated) {
+
+				status.textContent =
+`Login berhasil
+
+Username : ${keycloak.tokenParsed.preferred_username}
+Nama     : ${keycloak.tokenParsed.name}
+Email    : ${keycloak.tokenParsed.email}
+
+Access Token:
+
+${keycloak.token}`;
+
+			} else {
+
+				status.textContent = "Belum login.";
+
+			}
+
+		})
+		.catch(err => {
+
+			console.error(err);
+			status.textContent = "Gagal inisialisasi.";
+
+		});
+
+		document
+			.getElementById("login")
+			.onclick = () => {
+
+				keycloak.login();
+
+			};
+
+		document
+			.getElementById("logout")
+			.onclick = () => {
+
+				keycloak.logout({
+					redirectUri: window.location.origin
+				});
+
+			};
+
+		setInterval(() => {
+
+			keycloak.updateToken(30)
+				.then(refreshed => {
+
+					if (refreshed) {
+						console.log("Token diperbarui");
+					}
+
+				})
+				.catch(() => {
+
+					console.log("Token expired");
+					keycloak.login();
+
+				});
+
+		}, 10000);
+
+	</script>
+
+</body>
+</html>

@@ -1,0 +1,29 @@
+{
+  "name": "simpleauth",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest test --runInBand"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "express-session": "^1.19.0",
+    "jsonwebtoken": "^9.0.3",
+    "jwks-rsa": "^3.2.2",
+    "keycloak-connect": "^26.1.1",
+    "keycloak-js": "^26.2.4",
+    "mysql2": "^3.22.2",
+    "openid-client": "^6.8.3",
+    "supertest": "^7.2.2"
+  },
+  "devDependencies": {
+    "esbuild": "^0.27.3",
+    "jest": "^30.3.0"
+  }
+}
