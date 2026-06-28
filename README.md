@@ -1,19 +1,19 @@
-SecureNote Backend
+# SecureNote Backend
 
-Backend REST API untuk SecureNote, aplikasi pencatatan (note-taking) sederhana yang menggunakan Keycloak sebagai Identity and Access Management (IAM).
+Backend REST API untuk **SecureNote**, aplikasi pencatatan (note-taking) sederhana yang menggunakan **Keycloak** sebagai Identity and Access Management (IAM).
 
 Backend ini hanya bertanggung jawab untuk:
 
-- menyediakan REST API
-- memvalidasi Access Token dari Keycloak
-- menerapkan Role-Based Access Control (RBAC)
-- menyimpan data note ke database MySQL
+- Menyediakan REST API
+- Memvalidasi Access Token dari Keycloak
+- Menerapkan Role-Based Access Control (RBAC)
+- Menyimpan data note ke database MySQL
 
-Autentikasi dan manajemen pengguna tidak dilakukan oleh backend, melainkan sepenuhnya dikelola oleh Keycloak.
+Autentikasi dan manajemen pengguna **tidak** dilakukan oleh backend, melainkan sepenuhnya dikelola oleh Keycloak.
 
 ---
 
-Features
+## Features
 
 - JWT Authentication menggunakan Keycloak
 - Validasi token menggunakan JWKS
@@ -25,8 +25,9 @@ Features
 
 ---
 
-Project Structure
+## Project Structure
 
+```
 .
 ├── config/
 │   └── db.js
@@ -57,11 +58,13 @@ Project Structure
 │
 ├── server.js
 └── package.json
+```
 
 ---
 
-Architecture
+## Architecture
 
+```
 Client
     │
     │ Access Token
@@ -76,14 +79,13 @@ Backend API
 Business Logic
     ▼
 MySQL
+```
 
-Identity Provider:
-
-Keycloak
+**Identity Provider:** Keycloak
 
 ---
 
-Authentication
+## Authentication
 
 Backend menerima Bearer Access Token yang diterbitkan oleh Keycloak.
 
@@ -98,78 +100,83 @@ Backend tidak membuat JWT sendiri.
 
 ---
 
-Authorization
+## Authorization
 
 Role diterapkan menggunakan middleware.
 
-Endpoint| Role
-"/notes/*"| Authenticated User
-"/admin/*"| Admin
+| Endpoint    | Role               |
+|-------------|---------------------|
+| `/notes/*`  | Authenticated User  |
+| `/admin/*`  | Admin                |
 
 ---
 
-API
+## API
 
-Public
+### Public
 
-GET /
+#### `GET /`
 
-Health Check
+Health Check.
 
-Response
+**Response**
 
+```json
 {
   "message": "API is running"
 }
+```
 
 ---
 
-Notes
+### Notes
 
-Seluruh endpoint membutuhkan Bearer Access Token.
+> Seluruh endpoint membutuhkan Bearer Access Token.
 
-POST /notes
+#### `POST /notes`
 
 Membuat note baru.
 
+```json
 {
   "title": "My Note",
   "content": "Hello"
 }
+```
 
-GET /notes
+#### `GET /notes`
 
 Mengambil seluruh note milik user.
 
-GET /notes/:id
+#### `GET /notes/:id`
 
 Mengambil satu note milik user.
 
-PATCH /notes/:id
+#### `PATCH /notes/:id`
 
 Mengubah note.
 
-DELETE /notes/:id
+#### `DELETE /notes/:id`
 
 Menghapus note.
 
 ---
 
-Admin
+### Admin
 
-Membutuhkan role "admin".
+> Membutuhkan role `admin`.
 
-GET /admin/notes
+#### `GET /admin/notes`
 
 Mengambil seluruh note.
 
-GET /admin/notes/:id
+#### `GET /admin/notes/:id`
 
 Mengambil note berdasarkan ID.
 
 ---
 
-Prerequisites
+## Prerequisites
 
 Sebelum menjalankan backend, pastikan:
 
@@ -183,80 +190,97 @@ Konfigurasi lengkap Keycloak dijelaskan pada dokumentasi Keycloak.
 
 ---
 
-Environment Variables
+## Environment Variables
 
-Buat file ".env"
+Buat file `.env`:
 
+```env
 PORT=3000
 
 DB_HOST=localhost
 DB_USER=root
 DB_PASS=password
 DB_NAME=securenote
+```
 
 ---
 
-Installation
+## Installation
 
-Clone repository
+Clone repository:
 
+```bash
 git clone <repository-url>
 cd securenote
+```
 
-Install dependency
+Install dependency:
 
+```bash
 npm install
+```
 
-Jalankan server
+Jalankan server:
 
+```bash
 npm start
+```
 
 atau
 
+```bash
 node server.js
+```
 
 ---
 
-Obtaining an Access Token
+## Obtaining an Access Token
 
 Project ini tidak menyertakan frontend.
 
-Untuk keperluan pengujian API, Access Token dapat diperoleh menggunakan Direct Access Grant pada Keycloak.
+Untuk keperluan pengujian API, Access Token dapat diperoleh menggunakan **Direct Access Grant** pada Keycloak.
 
 Contoh:
 
+```bash
 curl -X POST \
-http://localhost:8080/realms/myrealm/protocol/openid-connect/token \
--d "grant_type=password" \
--d "client_id=frontend" \
--d "username=user1" \
--d "password=password"
+  http://localhost:8080/realms/myrealm/protocol/openid-connect/token \
+  -d "grant_type=password" \
+  -d "client_id=frontend" \
+  -d "username=user1" \
+  -d "password=password"
+```
 
 Response akan berisi field:
 
+```json
 {
   "access_token": "..."
 }
+```
 
 Gunakan token tersebut pada setiap request:
 
+```
 Authorization: Bearer <access_token>
+```
 
-«Note
-
-Direct Access Grant hanya digunakan untuk kebutuhan development dan testing. Pada production environment disarankan menggunakan Authorization Code Flow dengan PKCE.»
+> **Note**
+> Direct Access Grant hanya digunakan untuk kebutuhan development dan testing. Pada production environment disarankan menggunakan Authorization Code Flow dengan PKCE.
 
 ---
 
-Running Tests
+## Running Tests
 
 Menjalankan seluruh test:
 
+```bash
 npm test
+```
 
 ---
 
-Security
+## Security
 
 Backend melakukan beberapa validasi terhadap JWT:
 
@@ -268,11 +292,11 @@ Backend melakukan beberapa validasi terhadap JWT:
 Selain itu:
 
 - User hanya dapat mengakses note miliknya sendiri.
-- Endpoint "/admin" hanya dapat diakses oleh pengguna dengan role "admin".
+- Endpoint `/admin` hanya dapat diakses oleh pengguna dengan role `admin`.
 
 ---
 
-Technologies
+## Technologies
 
 - Node.js
 - Express.js
@@ -284,7 +308,7 @@ Technologies
 
 ---
 
-Keycloak
+## Keycloak
 
 README ini hanya membahas backend.
 
@@ -301,6 +325,6 @@ Dokumentasi konfigurasi Keycloak tersedia pada README terpisah, yang mencakup:
 
 ---
 
-License
+## License
 
 MIT
